@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/perl/bin/perl
 
 require IO::Stty;
 

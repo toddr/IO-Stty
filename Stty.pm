@@ -5,6 +5,8 @@ package IO::Stty;
 
 use POSIX;
 
+$IO::Stty::VERSION='.02';
+
 
 sub stty {
   # I'm not feeling very inspired about this. Terminal parameters are obscure
@@ -14,7 +16,7 @@ sub stty {
   # spec has been implemented properly it should mostly work.
   # Version info
   if ($_[1] eq '-v' || $_[1] =~ /version/ ) {
-    return "0.01\n";
+    return $IO::Stty::VERSION."\n";
   }
   my ($tty_handle)=shift; # This should be a \*HANDLE
   my (@parameters);

@@ -5,15 +5,360 @@ use warnings;
 
 use POSIX;
 
-our $VERSION='0.03';
+our $VERSION='0.02_01';
 
+=head1 NAME
+
+Change and print terminal line settings
+
+=head1 SYNOPSIS
+
+    # calling the script directly
+    stty [setting...]
+    stty {-a,-g,-v,--version}
+    
+    # Calling Stty module
+    use IO::Stty;
+    IO::Stty::stty(\*TTYHANDLE, @modes);
+
+     use IO::Stty;
+     $old_mode=IO::Stty::stty(\*STDIN,'-g');
+
+     # Turn off echoing.
+     IO::Stty::stty(\*STDIN,'-echo');
+
+     # Do whatever.. grab input maybe?
+     $read_password = <>;
+
+     # Now restore the old mode.
+     IO::Stty::stty(\*STDIN,$old_mode);
+
+     # What settings do we have anyway?
+     print IO::Stty::stty(\*STDIN,'-a');
+
+=head1 DESCRIPTION
+
+This is the PERL POSIX compliant stty. 
+
+=head1 INTRO
+
+This has not been tailored to the IO::File stuff but will work with it as
+indicated. Before you go futzing with term parameters it's a good idea to grab
+the current settings and restore them when you finish.
+
+stty accepts the following non-option arguments that change aspects of the
+terminal line operation. A `[-]' before a capability means that it can be
+turned off by preceding it with a `-'. 
+
+=head1 stty parameters
+
+=head2 Control settings
+
+=over 4
+
+=item [-]parenb
+
+Generate parity bit in output and expect parity bit in input.
+
+=item [-]parodd
+
+Set odd parity (even with `-').
+
+=item cs5 cs6 cs7 cs8
+
+Set character size to 5, 6, 7, or 8 bits.
+
+=item [-]hupcl [-]hup
+
+Send a hangup signal when the last process closes the tty.
+
+=item [-]cstopb
+
+Use two stop bits per character (one with `-').
+
+=item [-]cread
+
+Allow input to be received.
+
+=item [-]clocal
+
+Disable modem control signals.
+
+=back
+
+=head2 Input settings
+
+=over 4
+
+=item [-]ignbrk
+
+Ignore break characters.
+
+=item [-]brkint
+
+Breaks cause an interrupt signal.
+
+=item [-]ignpar
+
+Ignore characters with parity errors.
+
+=item [-]parmrk
+
+Mark parity errors (with a 255-0-character sequence).
+
+=item [-]inpck
+
+Enable input parity checking.
+
+=item [-]istrip
+
+Clear high (8th) bit of input characters.
+
+=item [-]inlcr
+
+Translate newline to carriage return.
+
+=item [-]igncr
+
+Ignore carriage return.
+
+=item [-]icrnl
+
+Translate carriage return to newline.
+
+=item [-]ixon
+
+Enable XON/XOFF flow control.
+
+=item [-]ixoff
+
+Enable sending of stop character when the system
+input buffer is almost full, and start character
+when it becomes almost empty again.
+
+=back 
+
+=head2 Output settings
+
+=over 4
+
+=item [-]opost
+
+Postprocess output.
+
+=back
+
+=head2 Local settings
+
+=over 4
+
+=item [-]isig
+
+Enable interrupt, quit, and suspend special characters.
+
+=item [-]icanon
+
+Enable erase, kill, werase, and rprnt special characters.
+
+=item [-]echo
+
+Echo input characters.
+
+=item [-]echoe, [-]crterase
+
+Echo erase characters as backspace-space-backspace.
+
+=item [-]echok
+
+Echo a newline after a kill character.
+
+=item [-]echonl
+
+Echo newline even if not echoing other characters.
+
+=item [-]noflsh
+
+Disable flushing after interrupt and quit special characters.
+
+* Though this claims non-posixhood it is supported by the perl POSIX.pm.
+
+=item [-]tostop (np)
+
+Stop background jobs that try to write to the terminal.
+
+=back
+
+=head2 Combination settings
+
+=over 4
+
+=item ek
+
+Reset the erase and kill special characters to their default values.
+
+=item sane
+
+Same as:
+
+    cread -ignbrk brkint -inlcr -igncr icrnl -ixoff opost 
+    isig icanon echo echoe echok -echonl -noflsh -tostop 
+
+also sets all special characters to their default
+values.
+
+=item [-]cooked
+
+Same as:
+
+    brkint ignpar istrip icrnl ixon opost isig icanon
+
+plus sets the eof and eol characters to their default values 
+if they are the same as the min and time characters.
+With `-', same as raw.
+
+=item [-]raw
+
+Same as:
+
+    -ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr
+    -icrnl -ixon -ixoff -opost -isig -icanon min 1 time 0
+
+With `-', same as cooked.
+
+=item [-]pass8
+
+Same as:
+
+    -parenb -istrip cs8
+
+With  `-',  same  as parenb istrip cs7.
+
+=item dec
+
+Same as:
+
+    echoe echoctl echoke -ixany
+
+Also sets the interrupt special character to Ctrl-C, erase to
+Del, and kill to Ctrl-U.
+
+=back
+
+=head2 Special characters
+
+The special characters' default values vary from system to
+system. They are set with the syntax `name value', where
+the names are listed below and the value can be given
+either literally, in hat notation (`^c'), or as an integer
+which may start with `0x' to indicate hexadecimal, `0' to
+indicate octal, or any other digit to indicate decimal.
+Giving a value of `^-' or `undef' disables that special
+character.
+
+=over 4
+
+=item intr
+
+Send an interrupt signal.
+
+=item quit
+
+Send a quit signal.
+
+=item erase
+
+Erase the last character typed.
+
+=item kill
+
+Erase the current line.
+
+=item eof
+
+Send an end of file (terminate the input).
+
+=item eol
+
+End the line.
+
+=item start
+
+Restart the output after stopping it.
+
+=item stop
+
+Stop the output.
+
+=item susp
+
+Send a terminal stop signal.
+
+=back
+
+=head2 Special settings
+
+=over 4
+
+=item min N
+
+Set the minimum number of characters that will satisfy a read 
+until the time value has expired,  when <E>-icanon<E> is set.
+
+=item time N
+
+Set the number of tenths of a second before reads
+time out if the min number of characters  have  not
+been read, when -icanon is set.
+
+=item N
+
+Set the input and output speeds to N.  N can be one
+of: 0 50 75 110 134 134.5 150 200 300 600 1200 1800
+2400 4800 9600 19200 38400 exta extb.  exta is  the
+same  as 19200; extb is the same as 38400.  0 hangs
+up the line if -clocal is set.
+
+=back
+
+=head2 OPTIONS
+
+=over 4
+
+=item -a
+
+Print all current settings in human-readable  form.
+
+=item -g
+
+Print all current settings in a form  that  can  be
+used  as  an  argument  to  another stty command to
+restore the current settings.
+
+=item -v,--version
+
+Print version info.
+
+=back
+
+=head1 Direct Subroutines
+
+=over 4
+
+=item B<stty()>
+
+    IO::Stty::stty(\*STDIN, @params);
+
+From comments:
+
+    I'm not feeling very inspired about this. Terminal parameters are obscure
+    and boring. Basically what this will do is get the current setting,
+    take the parameters, modify the setting and write it back. Zzzz.
+    This is not especially efficent and probably not too fast. Assuming the POSIX
+    spec has been implemented properly it should mostly work.
+
+=cut
 
 sub stty {
-  # I'm not feeling very inspired about this. Terminal parameters are obscure
-  # and boring. Basically what this will do is get the current setting,
-  # take the parameters, modify the setting and write it back. Zzzz.
-  # This is not especially efficent and probably not too fast. Assuming the POSIX
-  # spec has been implemented properly it should mostly work.
   # Version info
   if ($_[1] eq '-v' || $_[1] =~ /version/ ) {
     return $IO::Stty::VERSION."\n";
@@ -241,6 +586,12 @@ sub stty {
   # OK.. that sucked.
 }
 
+=item B<show_me_the_crap()>
+
+Needs documentation
+
+=cut
+
 sub show_me_the_crap {
   my ($c_cflag,$c_iflag,$ispeed,$c_lflag,$c_oflag,
     $ospeed,$control_chars) = @_;
@@ -313,7 +664,36 @@ EOM
   return $rs;
 }
   
+=back
 
+=head1 AUTHOR
+
+Austin Schutz <auschutz@cpan.org> (Initial version and maintenance)
+
+Todd Rinaldo <toddr@cpan.org> (Maintenance)
+
+=head1 BUGS
+
+This is use at your own risk software. Do anything you want with it except
+blame me for it blowing up your machine because it's full of bugs.
+
+See above for what functions are supported. It's mostly standard POSIX
+stuff. If any of the settings are wrong and you actually know what some of
+these extremely arcane settings (like what 'sane' should be in POSIX land)
+really should be, please open an RT ticket.
+
+=head1 ACKNOWLEDGEMENTS
+
+None
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 1997 Austin Schutz, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
 
   
 1;

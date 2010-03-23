@@ -1,11 +1,11 @@
-#!/usr/bin/perl
-require 5;
-
 package IO::Stty;
+
+use strict;
+use warnings;
 
 use POSIX;
 
-$IO::Stty::VERSION='.02';
+our $VERSION='0.03';
 
 
 sub stty {

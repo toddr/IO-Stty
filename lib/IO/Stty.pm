@@ -14,8 +14,8 @@ Change and print terminal line settings
 =head1 SYNOPSIS
 
     # calling the script directly
-    stty [setting...]
-    stty {-a,-g,-v,--version}
+    stty.pl [setting...]
+    stty.pl {-a,-g,-v,--version}
     
     # Calling Stty module
     use IO::Stty;
@@ -359,13 +359,19 @@ From comments:
 =cut
 
 sub stty {
+  my $tty_handle = shift; # This should be a \*HANDLE
+
+  @_ or die("No parameters passed to stty");
+
   # Version info
-  if ($_[1] eq '-v' || $_[1] =~ /version/ ) {
+  if ($_[0] eq '-v' || $_[0] =~ /version/ ) {
     return $IO::Stty::VERSION."\n";
   }
-  my ($tty_handle)=shift; # This should be a \*HANDLE
-  my (@parameters);
-  my($parameter);
+  
+  
+
+  my @parameters;
+  my $parameter;
   # Build the 'this really means this' cases.
   foreach $parameter (@_) {
     if($parameter eq 'ek') {

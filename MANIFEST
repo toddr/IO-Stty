@@ -1,10 +1,10 @@
 Build.PL
+Changes
 META.yml
 Makefile.PL
 README
 lib/IO/Stty.pm
-scripts/stty
-stty.txt
+scripts/stty.pl
 t/00-load.t
 t/98-pod-coverage.t
 t/99-pod.t

@@ -15,7 +15,7 @@ my $builder = Module::Build->new(
     },
     add_to_cleanup      => ['IO-Stty-*' ],
     create_makefile_pl  => 'small',
-    script_files   => ['scripts/stty'],
+    script_files   => ['scripts/stty.pl'],
     meta_merge     => {
       resources => {
         homepage => 'http://github.com/toddr/IO-Stty',

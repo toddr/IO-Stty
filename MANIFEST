@@ -1,7 +1,6 @@
 Build.PL
 Changes
 META.yml
-Makefile.PL
 README
 lib/IO/Stty.pm
 scripts/stty.pl

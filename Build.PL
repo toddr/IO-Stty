@@ -14,12 +14,11 @@ my $builder = Module::Build->new(
 	'Module::Build' => '0.35',
     },
     add_to_cleanup      => ['IO-Stty-*' ],
-    create_makefile_pl  => 'small',
     script_files   => ['scripts/stty.pl'],
     meta_merge     => {
       resources => {
         homepage => 'http://github.com/toddr/IO-Stty',
-        bugtracker => 'https://rt.cpan.org/NoAuth/Bugs.html?Dist=IO-Stty',
+#        bugtracker => 'https://rt.cpan.org/NoAuth/Bugs.html?Dist=IO-Stty',
         MailingList => 'mailto:toddr@cpan.org',
         repository  => 'git://github.com/toddr/IO-Stty.git',
       }

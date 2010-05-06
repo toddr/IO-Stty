@@ -8,7 +8,7 @@ build_requires:
   Test::More: 0
 configure_requires:
   Module::Build: 0.36
-generated_by: 'Module::Build version 0.3603'
+generated_by: 'Module::Build version 0.3607'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -17,11 +17,10 @@ name: IO-Stty
 provides:
   IO::Stty:
     file: lib/IO/Stty.pm
-    version: 0.02_01
+    version: 0.03
 resources:
   MailingList: mailto:toddr@cpan.org
-  bugtracker: https://rt.cpan.org/NoAuth/Bugs.html?Dist=IO-Stty
   homepage: http://github.com/toddr/IO-Stty
   license: http://dev.perl.org/licenses/
   repository: git://github.com/toddr/IO-Stty.git
-version: 0.02_01
+version: 0.03

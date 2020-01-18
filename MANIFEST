@@ -1,9 +1,9 @@
-Build.PL
+Makefile.PL
 Changes
 META.yml
 README
 lib/IO/Stty.pm
 scripts/stty.pl
 t/00-load.t
-t/98-pod-coverage.t
+t/99-pod-coverage.t
 t/99-pod.t

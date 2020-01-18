@@ -31,6 +31,8 @@ jobs:
           echo "##[add-path]C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin"
       - name: perl -V
         run: perl -V
+      - name: Dependencies install
+        run: cpanm --notest Test::Pod::Coverage Test::Pod
       - name: Makefile.PL
         run: perl Makefile.PL
       - name: make test

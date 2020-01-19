@@ -374,6 +374,24 @@ sub stty {
   my $parameter;
   # Build the 'this really means this' cases.
   foreach $parameter (@_) {
+    # <KMB: deal with values for options that have them>
+    if(!defined($parameter) || $parameter eq '^-' || $parameter eq 'undef') {
+      # undefined value for special characters - intr, eol etc.
+      # note that we allow Perl undef as well as the string 'undef'
+      push (@parameters, &POSIX::_POSIX_VDISABLE);
+      next;
+    }
+    if($parameter =~ /^\^(.)$/) {
+      # hat-style control character
+      push (@parameters, ord($1) & 0x1f);
+      next;
+    }
+    if($parameter =~ /^0/) {
+      # octal or hexadecimal number - note that "oct" deals with "0x" for us
+      push (@parameters, oct($parameter));
+      next;
+    }
+    # </KMB>
     if($parameter eq 'ek') {
       push (@parameters,'erase',8,'kill',21);
       next;
@@ -418,10 +436,7 @@ sub stty {
       push (@parameters,'echoe','echok','intr',3,'erase', 127,'kill',21);
       next; 
     }
-    if($parameter =~ /^\d+$/) {
-      push (@parameters,'ispeed',$parameter,'ospeed',$parameter);
-      next;
-    }  
+    # <KMB: don't deal with speed here - it breaks other numeric values />
     push (@parameters,$parameter);
   }
     
@@ -563,8 +578,14 @@ sub stty {
     if ($parameter eq 'opost') { $c_oflag = (($set_value ? ($c_oflag | OPOST) : ($c_oflag & (~OPOST)))); next; }
   
     # Speed?
-    if ($parameter eq 'ospeed') { $ospeed = &{"POSIX::B".shift(@parameters)}; next; }
-    if ($parameter eq 'ispeed') { $ispeed = &{"POSIX::B".shift(@parameters)}; next; }
+    # <KMB: fix ispeed/ospeed processing>
+    if ($parameter eq 'ospeed') { $ospeed = eval "&POSIX::B".shift(@parameters); next; }
+    if ($parameter eq 'ispeed') { $ispeed = eval "&POSIX::B".shift(@parameters); next; }
+
+    # convert a raw number into ispeed+ospeed
+    if ($parameter =~ /^\d+$/) { unshift(@parameters, 'ispeed', $parameter, 'ospeed', $parameter); next; }
+    # </KMB>
+
   # Default.. parameter hasn't matched anything
 #    print "char:".sprintf("%lo",ord($parameter))."\n";
     warn "IO::Stty::stty passed invalid parameter '$parameter'\n";

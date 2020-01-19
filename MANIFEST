@@ -3,7 +3,7 @@ lib/IO/Stty.pm
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
-README
+README.md
 scripts/stty.pl
 t/00-load.t
 t/99-pod-coverage.t

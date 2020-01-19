@@ -1,8 +1,9 @@
-Makefile.PL
 Changes
-META.yml
-README
 lib/IO/Stty.pm
+Makefile.PL
+MANIFEST
+MANIFEST.SKIP
+README
 scripts/stty.pl
 t/00-load.t
 t/99-pod-coverage.t

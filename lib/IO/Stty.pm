@@ -9,7 +9,7 @@ our $VERSION='0.03';
 
 =head1 NAME
 
-Change and print terminal line settings
+IO::Stty - Change and print terminal line settings
 
 =head1 SYNOPSIS
 
